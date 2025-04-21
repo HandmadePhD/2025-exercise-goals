@@ -8,33 +8,35 @@
   <style>
     body { font-family: sans-serif; padding: 2rem; max-width: 600px; margin: auto; }
     input { width: 100%; padding: 8px; margin: 5px 0 15px; }
-    .status { font-weight: bold; margin-top: 1rem; }
     canvas { margin-top: 2rem; }
   </style>
 </head>
 <body>
   <h2>2025 Mileage & Elevation Tracker</h2>
   <label>Mileage Goal</label>
-  <input type="number" id="mileageGoal" placeholder="Enter total mileage goal" />
+  <input type="text" id="mileageGoal" placeholder="Enter total mileage goal" />
 
   <label>Elevation Gain Goal (ft)</label>
-  <input type="number" id="elevationGoal" placeholder="Enter total elevation gain goal" />
+  <input type="text" id="elevationGoal" placeholder="Enter total elevation gain goal" />
 
   <label>Mileage Completed</label>
-  <input type="number" id="mileageDone" placeholder="Enter mileage you've done so far" />
+  <input type="text" id="mileageDone" placeholder="Enter mileage you've done so far" />
 
   <label>Elevation Gain Completed (ft)</label>
-  <input type="number" id="elevationDone" placeholder="Enter elevation gain you've done so far" />
+  <input type="text" id="elevationDone" placeholder="Enter elevation gain you've done so far" />
 
   <button onclick="checkProgress()">Check Progress</button>
 
-  <div class="status" id="mileageStatus"></div>
-  <div class="status" id="elevationStatus"></div>
-
-  <canvas id="progressChart" width="400" height="200"></canvas>
+  <canvas id="mileageChart" width="400" height="200"></canvas>
+  <canvas id="elevationChart" width="400" height="200"></canvas>
 
   <script>
-    let chart;
+    let mileageChart;
+    let elevationChart;
+
+    function parseNumber(value) {
+      return parseFloat(value.replace(/,/g, '')) || 0;
+    }
 
     function checkProgress() {
       const now = new Date();
@@ -42,62 +44,68 @@
       const end = new Date('2026-01-01');
       const percentOfYear = (now - start) / (end - start);
 
-      const mileageGoal = parseFloat(document.getElementById('mileageGoal').value);
-      const elevationGoal = parseFloat(document.getElementById('elevationGoal').value);
-      const mileageDone = parseFloat(document.getElementById('mileageDone').value);
-      const elevationDone = parseFloat(document.getElementById('elevationDone').value);
+      const mileageGoal = parseNumber(document.getElementById('mileageGoal').value);
+      const elevationGoal = parseNumber(document.getElementById('elevationGoal').value);
+      const mileageDone = parseNumber(document.getElementById('mileageDone').value);
+      const elevationDone = parseNumber(document.getElementById('elevationDone').value);
 
       const expectedMileage = mileageGoal * percentOfYear;
       const expectedElevation = elevationGoal * percentOfYear;
 
-      document.getElementById('mileageStatus').innerText = mileageMsg;
-      document.getElementById('elevationStatus').innerText = elevationMsg;
-
-      if (chart) chart.destroy();
-      const ctx = document.getElementById('progressChart').getContext('2d');
-      chart = new Chart(ctx, {
+      if (mileageChart) mileageChart.destroy();
+      const mileageCtx = document.getElementById('mileageChart').getContext('2d');
+      mileageChart = new Chart(mileageCtx, {
         type: 'bar',
         data: {
-          labels: ['Mileage', 'Elevation'],
+          labels: ['Mileage'],
           datasets: [
             {
               label: 'Actual Mileage',
-              data: [mileageDone, null],
-              backgroundColor: 'rgba(54, 162, 235, 0.7)',
-              yAxisID: 'yMileage'
+              data: [mileageDone],
+              backgroundColor: 'rgba(54, 162, 235, 0.7)'
             },
             {
               label: 'Expected Mileage',
-              data: [expectedMileage, null],
-              backgroundColor: 'rgba(54, 162, 235, 0.3)',
-              yAxisID: 'yMileage'
-            },
-            {
-              label: 'Actual Elevation',
-              data: [null, elevationDone],
-              backgroundColor: 'rgba(255, 99, 132, 0.7)',
-              yAxisID: 'yElevation'
-            },
-            {
-              label: 'Expected Elevation',
-              data: [null, expectedElevation],
-              backgroundColor: 'rgba(255, 99, 132, 0.3)',
-              yAxisID: 'yElevation'
+              data: [expectedMileage],
+              backgroundColor: 'rgba(54, 162, 235, 0.3)'
             }
           ]
         },
         options: {
           responsive: true,
           scales: {
-            yMileage: {
-              type: 'linear',
-              position: 'left',
+            y: {
+              beginAtZero: true,
               title: { display: true, text: 'Mileage' }
+            }
+          }
+        }
+      });
+
+      if (elevationChart) elevationChart.destroy();
+      const elevationCtx = document.getElementById('elevationChart').getContext('2d');
+      elevationChart = new Chart(elevationCtx, {
+        type: 'bar',
+        data: {
+          labels: ['Elevation'],
+          datasets: [
+            {
+              label: 'Actual Elevation',
+              data: [elevationDone],
+              backgroundColor: 'rgba(255, 99, 132, 0.7)'
             },
-            yElevation: {
-              type: 'linear',
-              position: 'right',
-              grid: { drawOnChartArea: false },
+            {
+              label: 'Expected Elevation',
+              data: [expectedElevation],
+              backgroundColor: 'rgba(255, 99, 132, 0.3)'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: true,
               title: { display: true, text: 'Elevation (ft)' }
             }
           }
