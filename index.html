@@ -4,10 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>2025 Goal Tracker</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    body { font-family: sans-serif; padding: 2rem; max-width: 500px; margin: auto; }
+    body { font-family: sans-serif; padding: 2rem; max-width: 600px; margin: auto; }
     input { width: 100%; padding: 8px; margin: 5px 0 15px; }
     .status { font-weight: bold; margin-top: 1rem; }
+    canvas { margin-top: 2rem; }
   </style>
 </head>
 <body>
@@ -29,7 +31,11 @@
   <div class="status" id="mileageStatus"></div>
   <div class="status" id="elevationStatus"></div>
 
+  <canvas id="progressChart" width="400" height="200"></canvas>
+
   <script>
+    let chart;
+
     function checkProgress() {
       const now = new Date();
       const start = new Date('2025-01-01');
@@ -44,11 +50,59 @@
       const expectedMileage = mileageGoal * percentOfYear;
       const expectedElevation = elevationGoal * percentOfYear;
 
-      const mileageMsg = mileageDone >= expectedMileage ? '✅ On track for mileage!' : '⚠️ Behind on mileage.';
-      const elevationMsg = elevationDone >= expectedElevation ? '✅ On track for elevation!' : '⚠️ Behind on elevation.';
-
       document.getElementById('mileageStatus').innerText = mileageMsg;
       document.getElementById('elevationStatus').innerText = elevationMsg;
+
+      if (chart) chart.destroy();
+      const ctx = document.getElementById('progressChart').getContext('2d');
+      chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Mileage', 'Elevation'],
+          datasets: [
+            {
+              label: 'Actual Mileage',
+              data: [mileageDone, null],
+              backgroundColor: 'rgba(54, 162, 235, 0.7)',
+              yAxisID: 'yMileage'
+            },
+            {
+              label: 'Expected Mileage',
+              data: [expectedMileage, null],
+              backgroundColor: 'rgba(54, 162, 235, 0.3)',
+              yAxisID: 'yMileage'
+            },
+            {
+              label: 'Actual Elevation',
+              data: [null, elevationDone],
+              backgroundColor: 'rgba(255, 99, 132, 0.7)',
+              yAxisID: 'yElevation'
+            },
+            {
+              label: 'Expected Elevation',
+              data: [null, expectedElevation],
+              backgroundColor: 'rgba(255, 99, 132, 0.3)',
+              yAxisID: 'yElevation'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            yMileage: {
+              type: 'linear',
+              position: 'left',
+              title: { display: true, text: 'Mileage' }
+            },
+            yElevation: {
+              type: 'linear',
+              position: 'right',
+              grid: { drawOnChartArea: false },
+              title: { display: true, text: 'Elevation (ft)' }
+            }
+          }
+        }
+      });
     }
   </script>
 </body>
