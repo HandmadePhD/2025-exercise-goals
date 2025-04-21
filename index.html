@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2025 Goal Tracker</title>
+  <style>
+    body { font-family: sans-serif; padding: 2rem; max-width: 500px; margin: auto; }
+    input { width: 100%; padding: 8px; margin: 5px 0 15px; }
+    .status { font-weight: bold; margin-top: 1rem; }
+  </style>
+</head>
+<body>
+  <h2>2025 Mileage & Elevation Tracker</h2>
+  <label>Mileage Goal</label>
+  <input type="number" id="mileageGoal" placeholder="Enter total mileage goal" />
+
+  <label>Elevation Gain Goal (ft)</label>
+  <input type="number" id="elevationGoal" placeholder="Enter total elevation gain goal" />
+
+  <label>Mileage Completed</label>
+  <input type="number" id="mileageDone" placeholder="Enter mileage you've done so far" />
+
+  <label>Elevation Gain Completed (ft)</label>
+  <input type="number" id="elevationDone" placeholder="Enter elevation gain you've done so far" />
+
+  <button onclick="checkProgress()">Check Progress</button>
+
+  <div class="status" id="mileageStatus"></div>
+  <div class="status" id="elevationStatus"></div>
+
+  <script>
+    function checkProgress() {
+      const now = new Date();
+      const start = new Date('2025-01-01');
+      const end = new Date('2026-01-01');
+      const percentOfYear = (now - start) / (end - start);
+
+      const mileageGoal = parseFloat(document.getElementById('mileageGoal').value);
+      const elevationGoal = parseFloat(document.getElementById('elevationGoal').value);
+      const mileageDone = parseFloat(document.getElementById('mileageDone').value);
+      const elevationDone = parseFloat(document.getElementById('elevationDone').value);
+
+      const expectedMileage = mileageGoal * percentOfYear;
+      const expectedElevation = elevationGoal * percentOfYear;
+
+      const mileageMsg = mileageDone >= expectedMileage ? '✅ On track for mileage!' : '⚠️ Behind on mileage.';
+      const elevationMsg = elevationDone >= expectedElevation ? '✅ On track for elevation!' : '⚠️ Behind on elevation.';
+
+      document.getElementById('mileageStatus').innerText = mileageMsg;
+      document.getElementById('elevationStatus').innerText = elevationMsg;
+    }
+  </script>
+</body>
+</html>
