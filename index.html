@@ -6,29 +6,60 @@
   <title>2025 Goal Tracker</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    body { font-family: sans-serif; padding: 2rem; max-width: 600px; margin: auto; }
-    input { width: 100%; padding: 8px; margin: 5px 0 15px; }
-    canvas { margin-top: 2rem; }
+    body {
+      font-family: sans-serif;
+      padding: 1rem;
+      margin: 0;
+      max-width: 100%;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      box-sizing: border-box;
+      font-size: 1rem;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      font-size: 1rem;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      margin-top: 10px;
+    }
+    canvas {
+      width: 100% !important;
+      height: auto !important;
+      margin-top: 2rem;
+    }
   </style>
 </head>
 <body>
-  <h2>2025 Mileage & Elevation Tracker</h2>
-  <label>Mileage Goal</label>
-  <input type="text" id="mileageGoal" placeholder="Enter total mileage goal" />
+  <div class="container">
+    <h2>2025 Mileage & Elevation Tracker</h2>
+    <label>Mileage Goal</label>
+    <input type="text" id="mileageGoal" placeholder="Enter total mileage goal" />
 
-  <label>Elevation Gain Goal (ft)</label>
-  <input type="text" id="elevationGoal" placeholder="Enter total elevation gain goal" />
+    <label>Elevation Gain Goal (ft)</label>
+    <input type="text" id="elevationGoal" placeholder="Enter total elevation gain goal" />
 
-  <label>Mileage Completed</label>
-  <input type="text" id="mileageDone" placeholder="Enter mileage you've done so far" />
+    <label>Mileage Completed</label>
+    <input type="text" id="mileageDone" placeholder="Enter mileage you've done so far" />
 
-  <label>Elevation Gain Completed (ft)</label>
-  <input type="text" id="elevationDone" placeholder="Enter elevation gain you've done so far" />
+    <label>Elevation Gain Completed (ft)</label>
+    <input type="text" id="elevationDone" placeholder="Enter elevation gain you've done so far" />
 
-  <button onclick="checkProgress()">Check Progress</button>
+    <button onclick="checkProgress()">Check Progress</button>
 
-  <canvas id="mileageChart" width="400" height="200"></canvas>
-  <canvas id="elevationChart" width="400" height="200"></canvas>
+    <canvas id="mileageChart"></canvas>
+    <canvas id="elevationChart"></canvas>
+  </div>
 
   <script>
     let mileageChart;
